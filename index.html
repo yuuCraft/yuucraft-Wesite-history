@@ -3,359 +3,371 @@
  <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Advanced Web Benchmark</title>
+  <title>ゆーくらBenchmark</title>
   <script src="/_sdk/element_sdk.js"></script>
   <script src="https://cdn.tailwindcss.com"></script>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;700&amp;family=Inter:wght@400;600;700;800&amp;display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700;900&amp;display=swap" rel="stylesheet">
   <style>
     body {
       box-sizing: border-box;
-      font-family: 'Inter', sans-serif;
+      font-family: 'Noto Sans JP', sans-serif;
     }
     
-    .mono {
-      font-family: 'JetBrains Mono', monospace;
+    .gradient-orange {
+      background: linear-gradient(135deg, #ff6b35 0%, #ff8c42 100%);
     }
     
-    .gradient-bg {
-      background: linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #334155 100%);
+    .gradient-blue {
+      background: linear-gradient(135deg, #4a90e2 0%, #5ca9fb 100%);
     }
     
-    .card-glass {
-      background: rgba(15, 23, 42, 0.6);
-      backdrop-filter: blur(20px);
-      border: 1px solid rgba(148, 163, 184, 0.1);
+    .gradient-purple {
+      background: linear-gradient(135deg, #b24592 0%, #f15f79 100%);
     }
     
-    .metric-glow {
-      text-shadow: 0 0 30px rgba(59, 130, 246, 0.5);
+    .gradient-green {
+      background: linear-gradient(135deg, #38b2ac 0%, #4fd1c5 100%);
     }
     
-    @keyframes scan {
-      0%, 100% { transform: translateY(-100%); }
-      50% { transform: translateY(100%); }
+    .score-card {
+      background: rgba(255, 255, 255, 0.95);
+      backdrop-filter: blur(10px);
     }
     
-    .scan-line {
-      animation: scan 3s ease-in-out infinite;
+    .test-running {
+      background: rgba(255, 255, 255, 0.1);
+      backdrop-filter: blur(10px);
     }
     
-    .progress-shimmer {
-      background: linear-gradient(90deg, 
-        rgba(59, 130, 246, 0.1) 0%,
-        rgba(59, 130, 246, 0.3) 50%,
-        rgba(59, 130, 246, 0.1) 100%);
-      background-size: 200% 100%;
-      animation: shimmer 2s ease-in-out infinite;
+    @keyframes progress-fill {
+      0% { width: 0%; }
+    }
+    
+    .progress-bar-animated {
+      animation: progress-fill 0.8s ease-out forwards;
+    }
+    
+    @keyframes pulse-glow {
+      0%, 100% {
+        box-shadow: 0 0 20px rgba(255, 107, 53, 0.4);
+      }
+      50% {
+        box-shadow: 0 0 40px rgba(255, 107, 53, 0.8);
+      }
+    }
+    
+    .pulse-glow {
+      animation: pulse-glow 2s ease-in-out infinite;
+    }
+    
+    @keyframes rotate {
+      from { transform: rotate(0deg); }
+      to { transform: rotate(360deg); }
+    }
+    
+    .rotate-animation {
+      animation: rotate 2s linear infinite;
+    }
+    
+    .text-shadow-glow {
+      text-shadow: 0 0 20px rgba(255, 255, 255, 0.5);
+    }
+    
+    .card-shadow {
+      box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
     }
     
     @keyframes shimmer {
-      0% { background-position: -200% 0; }
-      100% { background-position: 200% 0; }
+      0% { background-position: -1000px 0; }
+      100% { background-position: 1000px 0; }
     }
     
-    canvas {
-      image-rendering: pixelated;
+    .shimmer {
+      background: linear-gradient(90deg, transparent 0%, rgba(255,255,255,0.3) 50%, transparent 100%);
+      background-size: 1000px 100%;
+      animation: shimmer 2s infinite;
     }
   </style>
   <style>@view-transition { navigation: auto; }</style>
   <script src="/_sdk/data_sdk.js" type="text/javascript"></script>
  </head>
  <body class="h-full">
-  <div id="app" class="h-full w-full overflow-auto gradient-bg">
-   <div class="min-h-full w-full p-4 md:p-8">
-    <div class="max-w-7xl mx-auto"><!-- Header -->
-     <div class="text-center mb-8">
-      <h1 id="mainTitle" class="text-5xl md:text-7xl font-black text-white mb-3 metric-glow tracking-tight">ADVANCED BENCHMARK</h1>
-      <p id="subtitle" class="text-lg md:text-xl text-slate-300 mono">Web Performance Analysis Suite</p>
-     </div><!-- Start Screen -->
-     <div id="startScreen" class="text-center">
-      <div class="card-glass rounded-3xl p-8 md:p-12 mb-6 max-w-2xl mx-auto">
-       <p class="text-slate-300 mb-8 text-base md:text-lg leading-relaxed">以下のテストを実行します：<br><span class="text-blue-400">CPU演算 / GPU処理 / メモリ管理 / FPS計測 / ネットワーク速度 / Web Audio / WebGL / DOM操作</span></p><button id="startButton" class="bg-blue-600 text-white px-10 py-5 rounded-xl text-xl font-bold hover:bg-blue-500 transition-all transform hover:scale-105 shadow-2xl"> フルベンチマーク開始 </button>
-       <p class="mt-6 text-slate-400 text-sm">※ 測定には約20-30秒かかります</p>
+  <div id="app" class="h-full w-full overflow-auto" style="background: linear-gradient(180deg, #1a1a2e 0%, #16213e 100%);"><!-- Start Screen -->
+   <div id="startScreen" class="h-full w-full flex flex-col items-center justify-center p-6">
+    <div class="text-center max-w-md w-full"><!-- Logo Area -->
+     <div class="mb-8">
+      <div class="w-32 h-32 mx-auto gradient-orange rounded-3xl flex items-center justify-center mb-6 card-shadow pulse-glow">
+       <svg class="w-20 h-20 text-white" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path>
+       </svg>
       </div>
-     </div><!-- Testing Screen -->
-     <div id="testingScreen" class="hidden">
-      <div class="card-glass rounded-3xl p-6 md:p-8 mb-6">
-       <div class="flex items-center justify-between mb-4">
-        <h2 id="currentTest" class="text-2xl md:text-3xl font-bold text-white">初期化中...</h2><span id="testProgress" class="text-lg md:text-xl text-blue-400 mono font-bold">0/8</span>
-       </div>
-       <div class="bg-slate-800 rounded-full h-3 overflow-hidden mb-4">
-        <div id="progressBar" class="bg-gradient-to-r from-blue-500 to-cyan-400 h-full rounded-full transition-all duration-500"></div>
-       </div>
-       <p id="testStatus" class="text-slate-300 text-sm md:text-base mono">準備中...</p>
-       <div class="mt-4 grid grid-cols-2 md:grid-cols-4 gap-3">
-        <div class="text-center p-3 bg-slate-800 rounded-lg">
-         <div id="liveMetric1" class="text-2xl font-bold text-blue-400 mono">
-          -
+      <h1 id="mainTitle" class="text-5xl font-black text-white mb-3 text-shadow-glow">WEB BENCHMARK</h1>
+      <p id="versionText" class="text-lg text-gray-400 font-medium">v10.0 Professional</p>
+     </div><!-- Info Cards -->
+     <div class="space-y-3 mb-8">
+      <div class="score-card rounded-2xl p-4 card-shadow">
+       <div class="flex items-center justify-between">
+        <div class="flex items-center space-x-3">
+         <div class="w-10 h-10 gradient-blue rounded-xl flex items-center justify-center">
+          <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 3v2m6-2v2M9 19v2m6-2v2M5 9H3m2 6H3m18-6h-2m2 6h-2M7 19h10a2 2 0 002-2V7a2 2 0 00-2-2H7a2 2 0 00-2 2v10a2 2 0 002 2zM9 9h6v6H9V9z"></path>
+          </svg>
          </div>
-         <div class="text-xs text-slate-400 mt-1">
-          リアルタイム
-         </div>
-        </div>
-        <div class="text-center p-3 bg-slate-800 rounded-lg">
-         <div id="liveMetric2" class="text-2xl font-bold text-cyan-400 mono">
-          -
-         </div>
-         <div class="text-xs text-slate-400 mt-1">
-          処理速度
+         <div class="text-left">
+          <div class="text-sm text-gray-600 font-medium">
+           CPU性能
+          </div>
+          <div class="text-xs text-gray-400">
+           演算処理・マルチスレッド
+          </div>
          </div>
         </div>
-        <div class="text-center p-3 bg-slate-800 rounded-lg">
-         <div id="liveMetric3" class="text-2xl font-bold text-purple-400 mono">
-          -
-         </div>
-         <div class="text-xs text-slate-400 mt-1">
-          FPS
-         </div>
-        </div>
-        <div class="text-center p-3 bg-slate-800 rounded-lg">
-         <div id="liveMetric4" class="text-2xl font-bold text-green-400 mono">
-          -
-         </div>
-         <div class="text-xs text-slate-400 mt-1">
-          メモリ
-         </div>
-        </div>
+        <svg class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+        </svg>
        </div>
       </div>
-      <div class="card-glass rounded-2xl p-4 overflow-hidden relative">
-       <canvas id="testCanvas" class="w-full rounded-lg" width="1200" height="600"></canvas>
-       <div class="absolute inset-0 pointer-events-none overflow-hidden">
-        <div class="scan-line absolute w-full h-1 bg-gradient-to-r from-transparent via-blue-400 to-transparent opacity-30"></div>
+      <div class="score-card rounded-2xl p-4 card-shadow">
+       <div class="flex items-center justify-between">
+        <div class="flex items-center space-x-3">
+         <div class="w-10 h-10 gradient-purple rounded-xl flex items-center justify-center">
+          <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21a4 4 0 01-4-4V5a2 2 0 012-2h4a2 2 0 012 2v12a4 4 0 01-4 4zm0 0h12a2 2 0 002-2v-4a2 2 0 00-2-2h-2.343M11 7.343l1.657-1.657a2 2 0 012.828 0l2.829 2.829a2 2 0 010 2.828l-8.486 8.485M7 17h.01"></path>
+          </svg>
+         </div>
+         <div class="text-left">
+          <div class="text-sm text-gray-600 font-medium">
+           GPU性能
+          </div>
+          <div class="text-xs text-gray-400">
+           グラフィックス・レンダリング
+          </div>
+         </div>
+        </div>
+        <svg class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+        </svg>
        </div>
       </div>
-     </div><!-- Results Screen -->
-     <div id="resultsScreen" class="hidden">
-      <div class="card-glass rounded-3xl p-6 md:p-8 mb-6">
-       <h2 class="text-3xl md:text-4xl font-black text-white mb-8 text-center">詳細測定結果</h2>
-       <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-8"><!-- CPU Score -->
-        <div class="bg-slate-800 rounded-xl p-5">
-         <div class="flex justify-between items-start mb-3">
-          <div>
-           <div class="text-sm text-slate-400 mb-1">
-            CPU演算性能
-           </div>
-           <div id="cpuScore" class="text-4xl font-black text-blue-400 mono">
-            0
-           </div>
-          </div>
-          <div class="text-right">
-           <div class="text-xs text-slate-500">
-            ops/sec
-           </div>
-           <div id="cpuDetail" class="text-sm text-slate-300 mono mt-1">
-            -
-           </div>
-          </div>
+      <div class="score-card rounded-2xl p-4 card-shadow">
+       <div class="flex items-center justify-between">
+        <div class="flex items-center space-x-3">
+         <div class="w-10 h-10 gradient-green rounded-xl flex items-center justify-center">
+          <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 7v10c0 2.21 3.582 4 8 4s8-1.79 8-4V7M4 7c0 2.21 3.582 4 8 4s8-1.79 8-4M4 7c0-2.21 3.582-4 8-4s8 1.79 8 4m0 5c0 2.21-3.582 4-8 4s-8-1.79-8-4"></path>
+          </svg>
          </div>
-         <div class="bg-slate-700 rounded-full h-2 overflow-hidden">
-          <div id="cpuBar" class="bg-gradient-to-r from-blue-500 to-blue-400 h-full rounded-full transition-all duration-1000"></div>
-         </div>
-        </div><!-- GPU Score -->
-        <div class="bg-slate-800 rounded-xl p-5">
-         <div class="flex justify-between items-start mb-3">
-          <div>
-           <div class="text-sm text-slate-400 mb-1">
-            GPU処理能力
-           </div>
-           <div id="gpuScore" class="text-4xl font-black text-cyan-400 mono">
-            0
-           </div>
+         <div class="text-left">
+          <div class="text-sm text-gray-600 font-medium">
+           メモリ・UX
           </div>
-          <div class="text-right">
-           <div class="text-xs text-slate-500">
-            polygons/sec
-           </div>
-           <div id="gpuDetail" class="text-sm text-slate-300 mono mt-1">
-            -
-           </div>
+          <div class="text-xs text-gray-400">
+           RAM管理・UI応答速度
           </div>
-         </div>
-         <div class="bg-slate-700 rounded-full h-2 overflow-hidden">
-          <div id="gpuBar" class="bg-gradient-to-r from-cyan-500 to-cyan-400 h-full rounded-full transition-all duration-1000"></div>
-         </div>
-        </div><!-- FPS Score -->
-        <div class="bg-slate-800 rounded-xl p-5">
-         <div class="flex justify-between items-start mb-3">
-          <div>
-           <div class="text-sm text-slate-400 mb-1">
-            レンダリングFPS
-           </div>
-           <div id="fpsScore" class="text-4xl font-black text-purple-400 mono">
-            0
-           </div>
-          </div>
-          <div class="text-right">
-           <div class="text-xs text-slate-500">
-            frames/sec
-           </div>
-           <div id="fpsDetail" class="text-sm text-slate-300 mono mt-1">
-            -
-           </div>
-          </div>
-         </div>
-         <div class="bg-slate-700 rounded-full h-2 overflow-hidden">
-          <div id="fpsBar" class="bg-gradient-to-r from-purple-500 to-purple-400 h-full rounded-full transition-all duration-1000"></div>
-         </div>
-        </div><!-- Memory Score -->
-        <div class="bg-slate-800 rounded-xl p-5">
-         <div class="flex justify-between items-start mb-3">
-          <div>
-           <div class="text-sm text-slate-400 mb-1">
-            メモリ管理
-           </div>
-           <div id="memoryScore" class="text-4xl font-black text-green-400 mono">
-            0
-           </div>
-          </div>
-          <div class="text-right">
-           <div class="text-xs text-slate-500">
-            MB/sec
-           </div>
-           <div id="memoryDetail" class="text-sm text-slate-300 mono mt-1">
-            -
-           </div>
-          </div>
-         </div>
-         <div class="bg-slate-700 rounded-full h-2 overflow-hidden">
-          <div id="memoryBar" class="bg-gradient-to-r from-green-500 to-green-400 h-full rounded-full transition-all duration-1000"></div>
-         </div>
-        </div><!-- Network Score -->
-        <div class="bg-slate-800 rounded-xl p-5">
-         <div class="flex justify-between items-start mb-3">
-          <div>
-           <div class="text-sm text-slate-400 mb-1">
-            ネットワーク速度
-           </div>
-           <div id="networkScore" class="text-4xl font-black text-yellow-400 mono">
-            0
-           </div>
-          </div>
-          <div class="text-right">
-           <div class="text-xs text-slate-500">
-            ms latency
-           </div>
-           <div id="networkDetail" class="text-sm text-slate-300 mono mt-1">
-            -
-           </div>
-          </div>
-         </div>
-         <div class="bg-slate-700 rounded-full h-2 overflow-hidden">
-          <div id="networkBar" class="bg-gradient-to-r from-yellow-500 to-yellow-400 h-full rounded-full transition-all duration-1000"></div>
-         </div>
-        </div><!-- Audio Score -->
-        <div class="bg-slate-800 rounded-xl p-5">
-         <div class="flex justify-between items-start mb-3">
-          <div>
-           <div class="text-sm text-slate-400 mb-1">
-            Audio処理
-           </div>
-           <div id="audioScore" class="text-4xl font-black text-pink-400 mono">
-            0
-           </div>
-          </div>
-          <div class="text-right">
-           <div class="text-xs text-slate-500">
-            samples/sec
-           </div>
-           <div id="audioDetail" class="text-sm text-slate-300 mono mt-1">
-            -
-           </div>
-          </div>
-         </div>
-         <div class="bg-slate-700 rounded-full h-2 overflow-hidden">
-          <div id="audioBar" class="bg-gradient-to-r from-pink-500 to-pink-400 h-full rounded-full transition-all duration-1000"></div>
-         </div>
-        </div><!-- WebGL Score -->
-        <div class="bg-slate-800 rounded-xl p-5">
-         <div class="flex justify-between items-start mb-3">
-          <div>
-           <div class="text-sm text-slate-400 mb-1">
-            WebGL性能
-           </div>
-           <div id="webglScore" class="text-4xl font-black text-orange-400 mono">
-            0
-           </div>
-          </div>
-          <div class="text-right">
-           <div class="text-xs text-slate-500">
-            draw calls/sec
-           </div>
-           <div id="webglDetail" class="text-sm text-slate-300 mono mt-1">
-            -
-           </div>
-          </div>
-         </div>
-         <div class="bg-slate-700 rounded-full h-2 overflow-hidden">
-          <div id="webglBar" class="bg-gradient-to-r from-orange-500 to-orange-400 h-full rounded-full transition-all duration-1000"></div>
-         </div>
-        </div><!-- DOM Score -->
-        <div class="bg-slate-800 rounded-xl p-5">
-         <div class="flex justify-between items-start mb-3">
-          <div>
-           <div class="text-sm text-slate-400 mb-1">
-            DOM操作速度
-           </div>
-           <div id="domScore" class="text-4xl font-black text-red-400 mono">
-            0
-           </div>
-          </div>
-          <div class="text-right">
-           <div class="text-xs text-slate-500">
-            ops/sec
-           </div>
-           <div id="domDetail" class="text-sm text-slate-300 mono mt-1">
-            -
-           </div>
-          </div>
-         </div>
-         <div class="bg-slate-700 rounded-full h-2 overflow-hidden">
-          <div id="domBar" class="bg-gradient-to-r from-red-500 to-red-400 h-full rounded-full transition-all duration-1000"></div>
          </div>
         </div>
-       </div><!-- Overall Score -->
-       <div class="bg-gradient-to-r from-blue-600 to-purple-600 rounded-2xl p-8 text-center">
-        <div class="text-slate-200 text-lg mb-2 font-semibold">
-         総合スコア
-        </div>
-        <div id="totalScore" class="text-7xl font-black text-white metric-glow mono">
+        <svg class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+        </svg>
+       </div>
+      </div>
+     </div><!-- Start Button --> <button id="startButton" class="w-full gradient-orange text-white px-8 py-5 rounded-2xl text-xl font-bold hover:opacity-90 transition-all transform hover:scale-105 card-shadow"> ベンチマーク開始 </button>
+     <p class="mt-6 text-gray-500 text-sm">測定時間: 約30秒</p>
+    </div>
+   </div><!-- Testing Screen -->
+   <div id="testingScreen" class="hidden h-full w-full flex flex-col p-6">
+    <div class="flex-1 flex flex-col max-w-2xl w-full mx-auto"><!-- Progress Header -->
+     <div class="mb-6">
+      <div class="flex items-center justify-between mb-3">
+       <h2 id="currentTestName" class="text-2xl font-bold text-white">初期化中...</h2><span id="testCounter" class="text-lg font-bold text-orange-400">0/8</span>
+      </div>
+      <div class="bg-gray-800 rounded-full h-3 overflow-hidden">
+       <div id="mainProgress" class="gradient-orange h-full rounded-full transition-all duration-300" style="width: 0%"></div>
+      </div>
+      <p id="testStatusText" class="text-gray-400 text-sm mt-2">準備中...</p>
+     </div><!-- Test Visualization Area -->
+     <div class="flex-1 flex flex-col">
+      <div class="test-running rounded-3xl p-6 flex-1 flex flex-col card-shadow"><!-- Current Score Display -->
+       <div class="text-center mb-6">
+        <div class="text-6xl font-black text-white mb-2" id="liveScore">
          0
         </div>
-        <div id="totalRating" class="text-xl text-slate-200 mt-3 font-semibold">
-         評価中...
+        <div class="text-gray-400 text-sm">
+         現在のスコア
+        </div>
+       </div><!-- Canvas for visual tests -->
+       <div class="flex-1 bg-gray-900 rounded-2xl overflow-hidden mb-4">
+        <canvas id="testCanvas" class="w-full h-full" width="800" height="600"></canvas>
+       </div><!-- Live Metrics -->
+       <div class="grid grid-cols-3 gap-3">
+        <div class="bg-gray-800 rounded-xl p-3 text-center">
+         <div id="metric1Value" class="text-2xl font-bold text-blue-400">
+          -
+         </div>
+         <div id="metric1Label" class="text-xs text-gray-500 mt-1">
+          待機中
+         </div>
+        </div>
+        <div class="bg-gray-800 rounded-xl p-3 text-center">
+         <div id="metric2Value" class="text-2xl font-bold text-purple-400">
+          -
+         </div>
+         <div id="metric2Label" class="text-xs text-gray-500 mt-1">
+          待機中
+         </div>
+        </div>
+        <div class="bg-gray-800 rounded-xl p-3 text-center">
+         <div id="metric3Value" class="text-2xl font-bold text-green-400">
+          -
+         </div>
+         <div id="metric3Label" class="text-xs text-gray-500 mt-1">
+          待機中
+         </div>
         </div>
        </div>
-      </div><button id="retestButton" class="w-full bg-blue-600 text-white px-8 py-5 rounded-xl text-xl font-bold hover:bg-blue-500 transition-all transform hover:scale-105 shadow-2xl"> 再測定 </button>
+      </div>
      </div>
+    </div>
+   </div><!-- Results Screen -->
+   <div id="resultsScreen" class="hidden h-full w-full overflow-auto p-6">
+    <div class="max-w-2xl mx-auto"><!-- Total Score Card -->
+     <div class="gradient-orange rounded-3xl p-8 mb-6 text-center card-shadow">
+      <h2 id="resultTitle" class="text-2xl font-bold text-white mb-4">ベンチマークスコア</h2>
+      <div id="totalScore" class="text-8xl font-black text-white mb-3 text-shadow-glow">
+       0
+      </div>
+      <div id="scoreRating" class="text-xl font-bold text-white opacity-90">
+       評価: -
+      </div>
+      <div class="mt-4 text-white text-sm opacity-75" id="deviceInfo">
+       -
+      </div>
+     </div><!-- Detailed Scores -->
+     <div class="space-y-4 mb-6"><!-- CPU Score -->
+      <div class="score-card rounded-2xl p-5 card-shadow">
+       <div class="flex items-center justify-between mb-3">
+        <div class="flex items-center space-x-3">
+         <div class="w-12 h-12 gradient-blue rounded-xl flex items-center justify-center">
+          <svg class="w-7 h-7 text-white" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 3v2m6-2v2M9 19v2m6-2v2M5 9H3m2 6H3m18-6h-2m2 6h-2M7 19h10a2 2 0 002-2V7a2 2 0 00-2-2H7a2 2 0 00-2 2v10a2 2 0 002 2zM9 9h6v6H9V9z"></path>
+          </svg>
+         </div>
+         <div>
+          <div class="text-lg font-bold text-gray-800">
+           CPU性能
+          </div>
+          <div class="text-xs text-gray-500" id="cpuDetail">
+           -
+          </div>
+         </div>
+        </div>
+        <div class="text-right">
+         <div id="cpuScore" class="text-3xl font-black text-blue-600">
+          0
+         </div>
+        </div>
+       </div>
+       <div class="bg-gray-200 rounded-full h-2 overflow-hidden">
+        <div id="cpuBar" class="gradient-blue h-full rounded-full transition-all duration-1000" style="width: 0%"></div>
+       </div>
+      </div><!-- GPU Score -->
+      <div class="score-card rounded-2xl p-5 card-shadow">
+       <div class="flex items-center justify-between mb-3">
+        <div class="flex items-center space-x-3">
+         <div class="w-12 h-12 gradient-purple rounded-xl flex items-center justify-center">
+          <svg class="w-7 h-7 text-white" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21a4 4 0 01-4-4V5a2 2 0 012-2h4a2 2 0 012 2v12a4 4 0 01-4 4zm0 0h12a2 2 0 002-2v-4a2 2 0 00-2-2h-2.343M11 7.343l1.657-1.657a2 2 0 012.828 0l2.829 2.829a2 2 0 010 2.828l-8.486 8.485M7 17h.01"></path>
+          </svg>
+         </div>
+         <div>
+          <div class="text-lg font-bold text-gray-800">
+           GPU性能
+          </div>
+          <div class="text-xs text-gray-500" id="gpuDetail">
+           -
+          </div>
+         </div>
+        </div>
+        <div class="text-right">
+         <div id="gpuScore" class="text-3xl font-black text-purple-600">
+          0
+         </div>
+        </div>
+       </div>
+       <div class="bg-gray-200 rounded-full h-2 overflow-hidden">
+        <div id="gpuBar" class="gradient-purple h-full rounded-full transition-all duration-1000" style="width: 0%"></div>
+       </div>
+      </div><!-- Memory Score -->
+      <div class="score-card rounded-2xl p-5 card-shadow">
+       <div class="flex items-center justify-between mb-3">
+        <div class="flex items-center space-x-3">
+         <div class="w-12 h-12 gradient-green rounded-xl flex items-center justify-center">
+          <svg class="w-7 h-7 text-white" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 7v10c0 2.21 3.582 4 8 4s8-1.79 8-4V7M4 7c0 2.21 3.582 4 8 4s8-1.79 8-4M4 7c0-2.21 3.582-4 8-4s8 1.79 8 4m0 5c0 2.21-3.582 4-8 4s-8-1.79-8-4"></path>
+          </svg>
+         </div>
+         <div>
+          <div class="text-lg font-bold text-gray-800">
+           メモリ性能
+          </div>
+          <div class="text-xs text-gray-500" id="memDetail">
+           -
+          </div>
+         </div>
+        </div>
+        <div class="text-right">
+         <div id="memScore" class="text-3xl font-black text-green-600">
+          0
+         </div>
+        </div>
+       </div>
+       <div class="bg-gray-200 rounded-full h-2 overflow-hidden">
+        <div id="memBar" class="gradient-green h-full rounded-full transition-all duration-1000" style="width: 0%"></div>
+       </div>
+      </div><!-- UX Score -->
+      <div class="score-card rounded-2xl p-5 card-shadow">
+       <div class="flex items-center justify-between mb-3">
+        <div class="flex items-center space-x-3">
+         <div class="w-12 h-12 gradient-orange rounded-xl flex items-center justify-center">
+          <svg class="w-7 h-7 text-white" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+          </svg>
+         </div>
+         <div>
+          <div class="text-lg font-bold text-gray-800">
+           UX性能
+          </div>
+          <div class="text-xs text-gray-500" id="uxDetail">
+           -
+          </div>
+         </div>
+        </div>
+        <div class="text-right">
+         <div id="uxScore" class="text-3xl font-black text-orange-600">
+          0
+         </div>
+        </div>
+       </div>
+       <div class="bg-gray-200 rounded-full h-2 overflow-hidden">
+        <div id="uxBar" class="gradient-orange h-full rounded-full transition-all duration-1000" style="width: 0%"></div>
+       </div>
+      </div>
+     </div><!-- Retest Button --> <button id="retestButton" class="w-full gradient-orange text-white px-8 py-5 rounded-2xl text-xl font-bold hover:opacity-90 transition-all transform hover:scale-105 card-shadow"> 再テスト </button>
     </div>
    </div>
   </div>
   <script>
     const defaultConfig = {
-      background_color: '#0f172a',
+      background_color: '#1a1a2e',
+      surface_color: '#ffffff',
       text_color: '#ffffff',
-      primary_action_color: '#3b82f6',
-      secondary_action_color: '#1e293b',
-      accent_color: '#06b6d4',
-      font_family: 'Inter',
+      primary_action_color: '#ff6b35',
+      secondary_action_color: '#4a90e2',
+      font_family: 'Noto Sans JP',
       font_size: 16,
-      main_title: 'ADVANCED BENCHMARK',
-      subtitle: 'Web Performance Analysis Suite',
-      button_text: 'フルベンチマーク開始'
+      main_title: 'WEB BENCHMARK',
+      version_text: 'v10.0 Professional',
+      start_button: 'ベンチマーク開始',
+      result_title: 'ベンチマークスコア',
+      retest_button: '再テスト'
     };
 
-    const results = {
-      cpu: 0, cpuDetail: '',
-      gpu: 0, gpuDetail: '',
-      fps: 0, fpsDetail: '',
-      memory: 0, memoryDetail: '',
-      network: 0, networkDetail: '',
-      audio: 0, audioDetail: '',
-      webgl: 0, webglDetail: '',
-      dom: 0, domDetail: '',
+    const benchmarkResults = {
+      cpu: { score: 0, detail: '' },
+      gpu: { score: 0, detail: '' },
+      memory: { score: 0, detail: '' },
+      ux: { score: 0, detail: '' },
       total: 0
     };
 
@@ -365,397 +377,417 @@
       const fontFamily = `${customFont}, sans-serif`;
 
       document.body.style.fontFamily = fontFamily;
-      document.getElementById('mainTitle').style.fontSize = `${baseSize * 4.375}px`;
+      
+      document.getElementById('mainTitle').style.fontSize = `${baseSize * 3.125}px`;
       document.getElementById('mainTitle').textContent = config.main_title || defaultConfig.main_title;
-      document.getElementById('subtitle').style.fontSize = `${baseSize * 1.25}px`;
-      document.getElementById('subtitle').textContent = config.subtitle || defaultConfig.subtitle;
-      document.getElementById('startButton').textContent = config.button_text || defaultConfig.button_text;
+      
+      document.getElementById('versionText').style.fontSize = `${baseSize * 1.125}px`;
+      document.getElementById('versionText').textContent = config.version_text || defaultConfig.version_text;
+      
+      document.getElementById('startButton').textContent = config.start_button || defaultConfig.start_button;
+      document.getElementById('resultTitle').textContent = config.result_title || defaultConfig.result_title;
+      document.getElementById('retestButton').textContent = config.retest_button || defaultConfig.retest_button;
       
       const primaryColor = config.primary_action_color || defaultConfig.primary_action_color;
-      document.getElementById('startButton').style.backgroundColor = primaryColor;
-      document.getElementById('retestButton').style.backgroundColor = primaryColor;
+      const gradientElements = document.querySelectorAll('.gradient-orange');
+      gradientElements.forEach(el => {
+        el.style.background = `linear-gradient(135deg, ${primaryColor} 0%, ${adjustColor(primaryColor, 20)} 100%)`;
+      });
     }
 
-    // CPU Test - 複雑な数学演算
+    function adjustColor(color, percent) {
+      const num = parseInt(color.replace('#', ''), 16);
+      const amt = Math.round(2.55 * percent);
+      const R = (num >> 16) + amt;
+      const G = (num >> 8 & 0x00FF) + amt;
+      const B = (num & 0x0000FF) + amt;
+      return '#' + (0x1000000 + (R < 255 ? R < 1 ? 0 : R : 255) * 0x10000 +
+        (G < 255 ? G < 1 ? 0 : G : 255) * 0x100 +
+        (B < 255 ? B < 1 ? 0 : B : 255))
+        .toString(16).slice(1);
+    }
+
+    function updateTestProgress(testName, status, current, total) {
+      document.getElementById('currentTestName').textContent = testName;
+      document.getElementById('testStatusText').textContent = status;
+      document.getElementById('testCounter').textContent = `${current}/${total}`;
+      document.getElementById('mainProgress').style.width = `${(current / total) * 100}%`;
+    }
+
+    function updateLiveMetrics(value1, label1, value2, label2, value3, label3) {
+      document.getElementById('metric1Value').textContent = value1;
+      document.getElementById('metric1Label').textContent = label1;
+      document.getElementById('metric2Value').textContent = value2;
+      document.getElementById('metric2Label').textContent = label2;
+      document.getElementById('metric3Value').textContent = value3;
+      document.getElementById('metric3Label').textContent = label3;
+    }
+
+    // CPU Test - 整数演算、浮動小数点演算、暗号化処理
     async function testCPU() {
-      updateTestUI('CPU演算テスト', '複雑な数値計算を実行中...', 1, 8);
-      
-      const iterations = 8000000;
-      const start = performance.now();
-      
-      let result = 0;
-      for (let i = 0; i < iterations; i++) {
-        result += Math.sqrt(i) * Math.sin(i / 1000) * Math.cos(i / 500) * Math.tan(i / 2000);
-        result = result % 1000000;
-        
-        if (i % 200000 === 0) {
-          document.getElementById('liveMetric1').textContent = Math.floor(i / 1000) + 'K';
-          await new Promise(resolve => setTimeout(resolve, 0));
-        }
-      }
-      
-      const end = performance.now();
-      const time = end - start;
-      const opsPerSec = (iterations / time * 1000).toFixed(2);
-      
-      results.cpu = parseFloat(opsPerSec);
-      results.cpuDetail = `${time.toFixed(2)}ms`;
-      
-      return results.cpu;
-    }
-
-    // GPU Test - Canvas 2D複雑な描画
-    async function testGPU() {
-      updateTestUI('GPU処理テスト', 'Canvas2Dレンダリング性能を測定中...', 2, 8);
+      updateTestProgress('CPU整数演算', '整数計算性能を測定中...', 1, 8);
+      updateLiveMetrics('-', '整数演算', '-', '浮動小数点', '-', '暗号化');
       
       const canvas = document.getElementById('testCanvas');
       const ctx = canvas.getContext('2d');
-      const particles = 500;
-      const frames = 120;
-      const start = performance.now();
+      ctx.fillStyle = '#1a1a2e';
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
       
-      for (let frame = 0; frame < frames; frame++) {
-        ctx.clearRect(0, 0, canvas.width, canvas.height);
+      // Integer operations
+      let intScore = 0;
+      const intStart = performance.now();
+      let result = 0;
+      for (let i = 0; i < 10000000; i++) {
+        result = (result + i * 13579) % 999999;
+        result = (result << 3) | (result >> 2);
+        if (i % 500000 === 0) {
+          updateLiveMetrics(`${Math.floor(i/10000)}%`, '整数演算', '-', '浮動小数点', '-', '暗号化');
+          await new Promise(r => setTimeout(r, 0));
+        }
+      }
+      const intTime = performance.now() - intStart;
+      intScore = Math.round(10000000 / intTime * 100);
+      
+      updateTestProgress('CPU浮動小数点演算', '科学計算性能を測定中...', 2, 8);
+      
+      // Float operations
+      let floatScore = 0;
+      const floatStart = performance.now();
+      let floatResult = 0.0;
+      for (let i = 0; i < 5000000; i++) {
+        floatResult += Math.sqrt(i) * Math.sin(i / 1000) * Math.cos(i / 500);
+        floatResult = floatResult % 100000;
+        if (i % 250000 === 0) {
+          updateLiveMetrics(`${intScore.toLocaleString()}`, '整数演算', `${Math.floor(i/50000)}%`, '浮動小数点', '-', '暗号化');
+          await new Promise(r => setTimeout(r, 0));
+        }
+      }
+      const floatTime = performance.now() - floatStart;
+      floatScore = Math.round(5000000 / floatTime * 100);
+      
+      updateTestProgress('CPU暗号化処理', '文字列操作とハッシュ演算...', 3, 8);
+      
+      // Crypto-like operations
+      let cryptoScore = 0;
+      const cryptoStart = performance.now();
+      for (let i = 0; i < 100000; i++) {
+        let str = 'benchmark_test_' + i;
+        for (let j = 0; j < 10; j++) {
+          str = btoa(str).substring(0, 20);
+        }
+        if (i % 5000 === 0) {
+          updateLiveMetrics(`${intScore.toLocaleString()}`, '整数演算', `${floatScore.toLocaleString()}`, '浮動小数点', `${Math.floor(i/1000)}%`, '暗号化');
+          await new Promise(r => setTimeout(r, 0));
+        }
+      }
+      const cryptoTime = performance.now() - cryptoStart;
+      cryptoScore = Math.round(100000 / cryptoTime * 100);
+      
+      const totalCpuScore = Math.round((intScore * 0.4 + floatScore * 0.4 + cryptoScore * 0.2));
+      benchmarkResults.cpu.score = totalCpuScore;
+      benchmarkResults.cpu.detail = `整数: ${intScore.toLocaleString()} / 浮動: ${floatScore.toLocaleString()}`;
+      
+      updateLiveMetrics(`${intScore.toLocaleString()}`, '整数演算', `${floatScore.toLocaleString()}`, '浮動小数点', `${cryptoScore.toLocaleString()}`, '暗号化');
+      document.getElementById('liveScore').textContent = totalCpuScore.toLocaleString();
+      
+      return totalCpuScore;
+    }
+
+    // GPU Test - Canvas 2D, WebGL, Animation
+    async function testGPU() {
+      updateTestProgress('GPU 2D描画', 'Canvas 2Dレンダリング性能...', 4, 8);
+      updateLiveMetrics('-', '2D描画', '-', 'WebGL', '-', 'アニメーション');
+      
+      const canvas = document.getElementById('testCanvas');
+      const ctx = canvas.getContext('2d');
+      
+      // 2D Canvas test
+      const canvas2DStart = performance.now();
+      for (let frame = 0; frame < 150; frame++) {
+        ctx.fillStyle = '#1a1a2e';
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
         
-        for (let i = 0; i < particles; i++) {
-          const x = (Math.sin(frame * 0.05 + i) * 300) + canvas.width / 2;
-          const y = (Math.cos(frame * 0.03 + i * 0.5) * 200) + canvas.height / 2;
-          const radius = Math.sin(frame * 0.1 + i) * 10 + 15;
+        for (let i = 0; i < 200; i++) {
+          const x = Math.sin(frame * 0.05 + i * 0.1) * 300 + canvas.width / 2;
+          const y = Math.cos(frame * 0.03 + i * 0.15) * 200 + canvas.height / 2;
+          const size = Math.sin(frame * 0.1 + i) * 20 + 30;
           
-          ctx.beginPath();
-          ctx.arc(x, y, radius, 0, Math.PI * 2);
-          const gradient = ctx.createRadialGradient(x, y, 0, x, y, radius);
-          gradient.addColorStop(0, `hsla(${(frame * 3 + i * 2) % 360}, 70%, 60%, 0.8)`);
-          gradient.addColorStop(1, `hsla(${(frame * 3 + i * 2) % 360}, 70%, 40%, 0.2)`);
+          const gradient = ctx.createRadialGradient(x, y, 0, x, y, size);
+          gradient.addColorStop(0, `hsla(${(frame * 2 + i * 3) % 360}, 70%, 60%, 0.8)`);
+          gradient.addColorStop(1, `hsla(${(frame * 2 + i * 3) % 360}, 70%, 30%, 0)`);
+          
           ctx.fillStyle = gradient;
+          ctx.beginPath();
+          ctx.arc(x, y, size, 0, Math.PI * 2);
           ctx.fill();
         }
         
-        if (frame % 10 === 0) {
-          document.getElementById('liveMetric2').textContent = frame + 'f';
-          await new Promise(resolve => setTimeout(resolve, 0));
+        if (frame % 15 === 0) {
+          updateLiveMetrics(`${Math.floor(frame/1.5)}%`, '2D描画', '-', 'WebGL', '-', 'アニメーション');
+          await new Promise(r => setTimeout(r, 0));
         }
       }
+      const canvas2DTime = performance.now() - canvas2DStart;
+      const canvas2DScore = Math.round(150 * 200 / canvas2DTime * 1000);
       
-      const end = performance.now();
-      const time = end - start;
-      const polygonsPerSec = ((particles * frames) / time * 1000).toFixed(2);
+      updateTestProgress('GPU WebGL', 'WebGL 3D性能を測定中...', 5, 8);
       
-      results.gpu = parseFloat(polygonsPerSec);
-      results.gpuDetail = `${time.toFixed(2)}ms`;
+      // WebGL test
+      const gl = canvas.getContext('webgl') || canvas.getContext('experimental-webgl');
+      let webglScore = 0;
       
-      return results.gpu;
-    }
-
-    // FPS Test - requestAnimationFrame精密測定
-    async function testFPS() {
-      updateTestUI('FPSテスト', 'フレームレートを精密測定中...', 3, 8);
+      if (gl) {
+        const vsSource = `
+          attribute vec4 aPosition;
+          void main() { gl_Position = aPosition; }
+        `;
+        const fsSource = `
+          precision mediump float;
+          uniform vec4 uColor;
+          void main() { gl_FragColor = uColor; }
+        `;
+        
+        const vs = gl.createShader(gl.VERTEX_SHADER);
+        gl.shaderSource(vs, vsSource);
+        gl.compileShader(vs);
+        
+        const fs = gl.createShader(gl.FRAGMENT_SHADER);
+        gl.shaderSource(fs, fsSource);
+        gl.compileShader(fs);
+        
+        const program = gl.createProgram();
+        gl.attachShader(program, vs);
+        gl.attachShader(program, fs);
+        gl.linkProgram(program);
+        gl.useProgram(program);
+        
+        const positionBuffer = gl.createBuffer();
+        const colorLocation = gl.getUniformLocation(program, 'uColor');
+        
+        const webglStart = performance.now();
+        for (let i = 0; i < 30000; i++) {
+          const x = Math.random() * 2 - 1;
+          const y = Math.random() * 2 - 1;
+          const size = Math.random() * 0.1;
+          
+          gl.bindBuffer(gl.ARRAY_BUFFER, positionBuffer);
+          gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([
+            x, y, x + size, y, x, y + size
+          ]), gl.STATIC_DRAW);
+          
+          const posLoc = gl.getAttribLocation(program, 'aPosition');
+          gl.enableVertexAttribArray(posLoc);
+          gl.vertexAttribPointer(posLoc, 2, gl.FLOAT, false, 0, 0);
+          
+          gl.uniform4f(colorLocation, Math.random(), Math.random(), Math.random(), 1.0);
+          gl.drawArrays(gl.TRIANGLES, 0, 3);
+          
+          if (i % 3000 === 0) {
+            updateLiveMetrics(`${canvas2DScore.toLocaleString()}`, '2D描画', `${Math.floor(i/300)}%`, 'WebGL', '-', 'アニメーション');
+            await new Promise(r => setTimeout(r, 0));
+          }
+        }
+        const webglTime = performance.now() - webglStart;
+        webglScore = Math.round(30000 / webglTime * 1000);
+      }
       
-      const canvas = document.getElementById('testCanvas');
-      const ctx = canvas.getContext('2d');
-      const duration = 2000;
-      const frameTimestamps = [];
+      updateTestProgress('GPUアニメーション', 'フレームレート計測中...', 6, 8);
       
-      return new Promise((resolve) => {
+      // Animation FPS test
+      const fpsTest = await new Promise((resolve) => {
+        const frames = [];
+        const duration = 2000;
         const startTime = performance.now();
-        let lastTime = startTime;
-        let frameCount = 0;
         
         function animate() {
           const currentTime = performance.now();
-          const deltaTime = currentTime - lastTime;
-          frameTimestamps.push(deltaTime);
-          lastTime = currentTime;
-          frameCount++;
+          frames.push(currentTime);
           
-          // 負荷をかける描画
-          ctx.clearRect(0, 0, canvas.width, canvas.height);
-          for (let i = 0; i < 100; i++) {
-            const x = Math.random() * canvas.width;
-            const y = Math.random() * canvas.height;
-            ctx.fillStyle = `hsl(${Math.random() * 360}, 70%, 60%)`;
-            ctx.fillRect(x, y, 20, 20);
+          ctx.fillStyle = '#1a1a2e';
+          ctx.fillRect(0, 0, canvas.width, canvas.height);
+          
+          const elapsed = currentTime - startTime;
+          for (let i = 0; i < 50; i++) {
+            const angle = elapsed * 0.001 + i * 0.2;
+            const x = Math.cos(angle) * 200 + canvas.width / 2;
+            const y = Math.sin(angle) * 200 + canvas.height / 2;
+            
+            ctx.fillStyle = `hsl(${(i * 7 + elapsed * 0.1) % 360}, 70%, 60%)`;
+            ctx.fillRect(x - 15, y - 15, 30, 30);
           }
           
-          if (frameCount % 10 === 0) {
-            document.getElementById('liveMetric3').textContent = frameCount;
-          }
-          
-          if (currentTime - startTime < duration) {
+          if (elapsed < duration) {
             requestAnimationFrame(animate);
           } else {
-            const avgFrameTime = frameTimestamps.reduce((a, b) => a + b, 0) / frameTimestamps.length;
-            const fps = 1000 / avgFrameTime;
-            const minFrameTime = Math.min(...frameTimestamps);
-            const maxFps = 1000 / minFrameTime;
-            
-            results.fps = parseFloat(fps.toFixed(3));
-            results.fpsDetail = `max ${maxFps.toFixed(1)} fps`;
-            
-            resolve(results.fps);
+            const fps = frames.length / (duration / 1000);
+            resolve(fps);
           }
         }
         
         requestAnimationFrame(animate);
       });
+      
+      const fpsScore = Math.round(fpsTest * 100);
+      
+      const totalGpuScore = Math.round((canvas2DScore * 0.4 + webglScore * 0.4 + fpsScore * 0.2));
+      benchmarkResults.gpu.score = totalGpuScore;
+      benchmarkResults.gpu.detail = `2D: ${canvas2DScore.toLocaleString()} / 3D: ${webglScore.toLocaleString()} / FPS: ${fpsTest.toFixed(1)}`;
+      
+      updateLiveMetrics(`${canvas2DScore.toLocaleString()}`, '2D描画', `${webglScore.toLocaleString()}`, 'WebGL', `${fpsTest.toFixed(1)}`, 'FPS');
+      document.getElementById('liveScore').textContent = totalGpuScore.toLocaleString();
+      
+      return totalGpuScore;
     }
 
-    // Memory Test - 大規模配列操作
+    // Memory Test
     async function testMemory() {
-      updateTestUI('メモリテスト', 'メモリアロケーションとGC性能を測定中...', 4, 8);
-      
-      const iterations = 2000;
-      const arraySize = 50000;
-      const start = performance.now();
-      let totalBytes = 0;
-      
-      for (let i = 0; i < iterations; i++) {
-        const arr = new Float64Array(arraySize);
-        for (let j = 0; j < arraySize; j++) {
-          arr[j] = Math.random() * 1000;
-        }
-        arr.sort();
-        const sum = arr.reduce((a, b) => a + b, 0);
-        totalBytes += arr.byteLength;
-        
-        if (i % 100 === 0) {
-          document.getElementById('liveMetric4').textContent = Math.floor(totalBytes / 1024 / 1024) + 'MB';
-          await new Promise(resolve => setTimeout(resolve, 0));
-        }
-      }
-      
-      const end = performance.now();
-      const time = end - start;
-      const mbPerSec = (totalBytes / 1024 / 1024 / time * 1000).toFixed(2);
-      
-      results.memory = parseFloat(mbPerSec);
-      results.memoryDetail = `${(totalBytes / 1024 / 1024).toFixed(0)}MB processed`;
-      
-      return results.memory;
-    }
-
-    // Network Test - Fetch APIレイテンシー測定
-    async function testNetwork() {
-      updateTestUI('ネットワークテスト', 'HTTP通信速度を測定中...', 5, 8);
-      
-      const tests = 5;
-      const latencies = [];
-      
-      for (let i = 0; i < tests; i++) {
-        const start = performance.now();
-        try {
-          // Canva CDNへのリクエスト（小さいリソース）
-          await fetch('https://cdn.tailwindcss.com/3.3.0/tailwind.min.css', { 
-            method: 'HEAD',
-            cache: 'no-store'
-          });
-          const end = performance.now();
-          latencies.push(end - start);
-        } catch (e) {
-          latencies.push(999);
-        }
-        
-        document.getElementById('liveMetric1').textContent = `${i + 1}/${tests}`;
-        await new Promise(resolve => setTimeout(resolve, 100));
-      }
-      
-      const avgLatency = latencies.reduce((a, b) => a + b, 0) / latencies.length;
-      const minLatency = Math.min(...latencies);
-      
-      // スコアは低レイテンシーほど高い（逆数スケール）
-      const score = (1000 / avgLatency * 100).toFixed(2);
-      
-      results.network = parseFloat(avgLatency.toFixed(3));
-      results.networkDetail = `min ${minLatency.toFixed(1)}ms`;
-      
-      return parseFloat(score);
-    }
-
-    // Audio Test - Web Audio API処理性能
-    async function testAudio() {
-      updateTestUI('Audioテスト', 'Web Audio API処理性能を測定中...', 6, 8);
-      
-      const AudioContext = window.AudioContext || window.webkitAudioContext;
-      if (!AudioContext) {
-        results.audio = 0;
-        results.audioDetail = 'Not supported';
-        return 0;
-      }
-      
-      const audioCtx = new AudioContext();
-      const iterations = 10000;
-      const start = performance.now();
-      
-      for (let i = 0; i < iterations; i++) {
-        const oscillator = audioCtx.createOscillator();
-        const gainNode = audioCtx.createGain();
-        oscillator.connect(gainNode);
-        gainNode.connect(audioCtx.destination);
-        oscillator.frequency.value = 440 + (i % 1000);
-        gainNode.gain.value = 0;
-        oscillator.start();
-        oscillator.stop(audioCtx.currentTime + 0.001);
-        
-        if (i % 500 === 0) {
-          document.getElementById('liveMetric2').textContent = Math.floor(i / 100) + '%';
-          await new Promise(resolve => setTimeout(resolve, 0));
-        }
-      }
-      
-      const end = performance.now();
-      const time = end - start;
-      const samplesPerSec = (iterations / time * 1000).toFixed(2);
-      
-      audioCtx.close();
-      
-      results.audio = parseFloat(samplesPerSec);
-      results.audioDetail = `${time.toFixed(2)}ms`;
-      
-      return results.audio;
-    }
-
-    // WebGL Test - 3D描画性能
-    async function testWebGL() {
-      updateTestUI('WebGLテスト', 'WebGL 3D描画性能を測定中...', 7, 8);
+      updateTestProgress('メモリ管理', 'RAM読み書き・GC性能測定中...', 7, 8);
+      updateLiveMetrics('-', 'アロケーション', '-', 'ソート', '-', 'GC効率');
       
       const canvas = document.getElementById('testCanvas');
-      const gl = canvas.getContext('webgl') || canvas.getContext('experimental-webgl');
+      const ctx = canvas.getContext('2d');
+      ctx.fillStyle = '#1a1a2e';
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
       
-      if (!gl) {
-        results.webgl = 0;
-        results.webglDetail = 'Not supported';
-        return 0;
-      }
-      
-      // シンプルなシェーダー
-      const vsSource = `
-        attribute vec4 aPosition;
-        void main() {
-          gl_Position = aPosition;
+      // Memory allocation test
+      const allocStart = performance.now();
+      const arrays = [];
+      for (let i = 0; i < 2000; i++) {
+        const arr = new Float64Array(30000);
+        for (let j = 0; j < 30000; j++) {
+          arr[j] = Math.random() * 10000;
         }
-      `;
-      
-      const fsSource = `
-        precision mediump float;
-        void main() {
-          gl_FragColor = vec4(1.0, 0.5, 0.2, 1.0);
-        }
-      `;
-      
-      function createShader(gl, type, source) {
-        const shader = gl.createShader(type);
-        gl.shaderSource(shader, source);
-        gl.compileShader(shader);
-        return shader;
-      }
-      
-      const vertexShader = createShader(gl, gl.VERTEX_SHADER, vsSource);
-      const fragmentShader = createShader(gl, gl.FRAGMENT_SHADER, fsSource);
-      
-      const program = gl.createProgram();
-      gl.attachShader(program, vertexShader);
-      gl.attachShader(program, fragmentShader);
-      gl.linkProgram(program);
-      gl.useProgram(program);
-      
-      const positionBuffer = gl.createBuffer();
-      gl.bindBuffer(gl.ARRAY_BUFFER, positionBuffer);
-      
-      const drawCalls = 50000;
-      const start = performance.now();
-      
-      for (let i = 0; i < drawCalls; i++) {
-        const x = (Math.random() - 0.5) * 2;
-        const y = (Math.random() - 0.5) * 2;
-        const size = Math.random() * 0.1;
-        
-        const positions = [
-          x, y,
-          x + size, y,
-          x, y + size,
-        ];
-        
-        gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(positions), gl.STATIC_DRAW);
-        
-        const positionLocation = gl.getAttribLocation(program, 'aPosition');
-        gl.enableVertexAttribArray(positionLocation);
-        gl.vertexAttribPointer(positionLocation, 2, gl.FLOAT, false, 0, 0);
-        
-        gl.drawArrays(gl.TRIANGLES, 0, 3);
-        
-        if (i % 2000 === 0) {
-          document.getElementById('liveMetric3').textContent = Math.floor(i / 500) + '%';
-          await new Promise(resolve => setTimeout(resolve, 0));
-        }
-      }
-      
-      const end = performance.now();
-      const time = end - start;
-      const drawCallsPerSec = (drawCalls / time * 1000).toFixed(2);
-      
-      results.webgl = parseFloat(drawCallsPerSec);
-      results.webglDetail = `${time.toFixed(2)}ms`;
-      
-      return results.webgl;
-    }
-
-    // DOM Test - DOM操作性能
-    async function testDOM() {
-      updateTestUI('DOMテスト', 'DOM操作とレイアウト性能を測定中...', 8, 8);
-      
-      const container = document.createElement('div');
-      container.style.position = 'absolute';
-      container.style.left = '-9999px';
-      document.body.appendChild(container);
-      
-      const iterations = 5000;
-      const start = performance.now();
-      
-      for (let i = 0; i < iterations; i++) {
-        const div = document.createElement('div');
-        div.className = 'test-element';
-        div.textContent = `Element ${i}`;
-        div.style.width = `${100 + i % 200}px`;
-        div.style.height = `${50 + i % 100}px`;
-        div.style.backgroundColor = `hsl(${i % 360}, 70%, 60%)`;
-        container.appendChild(div);
-        
-        if (i % 500 === 0) {
-          const computed = window.getComputedStyle(div);
-          const width = computed.width;
-        }
+        arrays.push(arr);
         
         if (i % 200 === 0) {
-          document.getElementById('liveMetric4').textContent = Math.floor(i / 50) + '%';
-          await new Promise(resolve => setTimeout(resolve, 0));
+          updateLiveMetrics(`${Math.floor(i/20)}%`, 'アロケーション', '-', 'ソート', '-', 'GC効率');
+          await new Promise(r => setTimeout(r, 0));
+        }
+      }
+      const allocTime = performance.now() - allocStart;
+      const allocScore = Math.round(2000 * 30000 / allocTime * 10);
+      
+      // Sorting test
+      const sortStart = performance.now();
+      for (let i = 0; i < 100; i++) {
+        const arr = new Array(50000).fill(0).map(() => Math.random() * 10000);
+        arr.sort((a, b) => a - b);
+        
+        if (i % 10 === 0) {
+          updateLiveMetrics(`${allocScore.toLocaleString()}`, 'アロケーション', `${i}%`, 'ソート', '-', 'GC効率');
+          await new Promise(r => setTimeout(r, 0));
+        }
+      }
+      const sortTime = performance.now() - sortStart;
+      const sortScore = Math.round(100 * 50000 / sortTime * 10);
+      
+      // GC test (create and discard)
+      const gcStart = performance.now();
+      for (let i = 0; i < 5000; i++) {
+        let temp = new Array(10000).fill(0).map((_, idx) => idx * Math.random());
+        temp = null;
+      }
+      const gcTime = performance.now() - gcStart;
+      const gcScore = Math.round(5000 * 10000 / gcTime * 10);
+      
+      const totalMemScore = Math.round((allocScore * 0.4 + sortScore * 0.3 + gcScore * 0.3));
+      benchmarkResults.memory.score = totalMemScore;
+      benchmarkResults.memory.detail = `確保: ${allocScore.toLocaleString()} / ソート: ${sortScore.toLocaleString()}`;
+      
+      updateLiveMetrics(`${allocScore.toLocaleString()}`, 'アロケーション', `${sortScore.toLocaleString()}`, 'ソート', `${gcScore.toLocaleString()}`, 'GC効率');
+      document.getElementById('liveScore').textContent = totalMemScore.toLocaleString();
+      
+      return totalMemScore;
+    }
+
+    // UX Test - DOM, Storage, Network
+    async function testUX() {
+      updateTestProgress('UX性能', 'DOM操作・ストレージ・ネットワーク測定中...', 8, 8);
+      updateLiveMetrics('-', 'DOM操作', '-', 'Storage', '-', 'Network');
+      
+      const canvas = document.getElementById('testCanvas');
+      const ctx = canvas.getContext('2d');
+      ctx.fillStyle = '#1a1a2e';
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+      
+      // DOM manipulation test
+      const domStart = performance.now();
+      const container = document.createElement('div');
+      container.style.position = 'absolute';
+      container.style.left = '-10000px';
+      document.body.appendChild(container);
+      
+      for (let i = 0; i < 3000; i++) {
+        const el = document.createElement('div');
+        el.className = 'test-item';
+        el.textContent = `Item ${i}`;
+        el.style.width = `${100 + i % 200}px`;
+        el.style.height = `${50 + i % 100}px`;
+        container.appendChild(el);
+        
+        if (i % 300 === 0) {
+          const computed = window.getComputedStyle(el);
+          const w = computed.width;
+        }
+        
+        if (i % 300 === 0) {
+          updateLiveMetrics(`${Math.floor(i/30)}%`, 'DOM操作', '-', 'Storage', '-', 'Network');
+          await new Promise(r => setTimeout(r, 0));
         }
       }
       
       container.innerHTML = '';
-      
-      for (let i = 0; i < iterations; i++) {
-        const div = document.createElement('div');
-        container.appendChild(div);
-        container.removeChild(div);
-      }
-      
-      const end = performance.now();
       document.body.removeChild(container);
+      const domTime = performance.now() - domStart;
+      const domScore = Math.round(3000 / domTime * 10000);
       
-      const time = end - start;
-      const opsPerSec = (iterations * 2 / time * 1000).toFixed(2);
+      // LocalStorage test
+      const storageStart = performance.now();
+      for (let i = 0; i < 1000; i++) {
+        const key = `test_key_${i}`;
+        const value = `test_value_${'x'.repeat(100)}_${i}`;
+        localStorage.setItem(key, value);
+        const retrieved = localStorage.getItem(key);
+        localStorage.removeItem(key);
+        
+        if (i % 100 === 0) {
+          updateLiveMetrics(`${domScore.toLocaleString()}`, 'DOM操作', `${Math.floor(i/10)}%`, 'Storage', '-', 'Network');
+          await new Promise(r => setTimeout(r, 0));
+        }
+      }
+      const storageTime = performance.now() - storageStart;
+      const storageScore = Math.round(1000 / storageTime * 10000);
       
-      results.dom = parseFloat(opsPerSec);
-      results.domDetail = `${time.toFixed(2)}ms`;
+      // Network test
+      const networkStart = performance.now();
+      const requests = [];
+      for (let i = 0; i < 5; i++) {
+        try {
+          const reqStart = performance.now();
+          await fetch('https://cdn.tailwindcss.com/3.3.0/tailwind.min.css', {
+            method: 'HEAD',
+            cache: 'no-store'
+          });
+          const reqTime = performance.now() - reqStart;
+          requests.push(reqTime);
+        } catch (e) {
+          requests.push(1000);
+        }
+        
+        updateLiveMetrics(`${domScore.toLocaleString()}`, 'DOM操作', `${storageScore.toLocaleString()}`, 'Storage', `${i + 1}/5`, 'Network');
+        await new Promise(r => setTimeout(r, 100));
+      }
+      const avgLatency = requests.reduce((a, b) => a + b, 0) / requests.length;
+      const networkScore = Math.round((1000 / avgLatency) * 5000);
       
-      return results.dom;
-    }
-
-    function updateTestUI(testName, status, current, total) {
-      document.getElementById('currentTest').textContent = testName;
-      document.getElementById('testStatus').textContent = status;
-      document.getElementById('testProgress').textContent = `${current}/${total}`;
-      document.getElementById('progressBar').style.width = `${(current / total) * 100}%`;
+      const totalUxScore = Math.round((domScore * 0.4 + storageScore * 0.3 + networkScore * 0.3));
+      benchmarkResults.ux.score = totalUxScore;
+      benchmarkResults.ux.detail = `DOM: ${domScore.toLocaleString()} / Latency: ${avgLatency.toFixed(1)}ms`;
+      
+      updateLiveMetrics(`${domScore.toLocaleString()}`, 'DOM操作', `${storageScore.toLocaleString()}`, 'Storage', `${avgLatency.toFixed(1)}ms`, 'レイテンシー');
+      document.getElementById('liveScore').textContent = totalUxScore.toLocaleString();
+      
+      return totalUxScore;
     }
 
     async function runFullBenchmark() {
@@ -763,52 +795,27 @@
       document.getElementById('testingScreen').classList.remove('hidden');
       
       await testCPU();
-      await new Promise(resolve => setTimeout(resolve, 300));
+      await new Promise(r => setTimeout(r, 500));
       
       await testGPU();
-      await new Promise(resolve => setTimeout(resolve, 300));
-      
-      await testFPS();
-      await new Promise(resolve => setTimeout(resolve, 300));
+      await new Promise(r => setTimeout(r, 500));
       
       await testMemory();
-      await new Promise(resolve => setTimeout(resolve, 300));
+      await new Promise(r => setTimeout(r, 500));
       
-      await testNetwork();
-      await new Promise(resolve => setTimeout(resolve, 300));
-      
-      await testAudio();
-      await new Promise(resolve => setTimeout(resolve, 300));
-      
-      await testWebGL();
-      await new Promise(resolve => setTimeout(resolve, 300));
-      
-      await testDOM();
+      await testUX();
+      await new Promise(r => setTimeout(r, 500));
       
       calculateTotalScore();
       displayResults();
     }
 
     function calculateTotalScore() {
-      // 正規化とウェイト付け
-      const cpuNorm = Math.min(results.cpu / 50000, 1) * 1000;
-      const gpuNorm = Math.min(results.gpu / 300000, 1) * 1000;
-      const fpsNorm = Math.min(results.fps / 60, 1) * 1000;
-      const memoryNorm = Math.min(results.memory / 500, 1) * 1000;
-      const networkNorm = Math.min((1000 / results.network) * 10, 1) * 1000;
-      const audioNorm = Math.min(results.audio / 30000, 1) * 1000;
-      const webglNorm = Math.min(results.webgl / 100000, 1) * 1000;
-      const domNorm = Math.min(results.dom / 30000, 1) * 1000;
-      
-      results.total = (
-        cpuNorm * 0.15 +
-        gpuNorm * 0.15 +
-        fpsNorm * 0.15 +
-        memoryNorm * 0.15 +
-        networkNorm * 0.10 +
-        audioNorm * 0.10 +
-        webglNorm * 0.10 +
-        domNorm * 0.10
+      benchmarkResults.total = Math.round(
+        benchmarkResults.cpu.score * 0.30 +
+        benchmarkResults.gpu.score * 0.30 +
+        benchmarkResults.memory.score * 0.25 +
+        benchmarkResults.ux.score * 0.15
       );
     }
 
@@ -816,83 +823,62 @@
       document.getElementById('testingScreen').classList.add('hidden');
       document.getElementById('resultsScreen').classList.remove('hidden');
       
-      const maxScore = 10000;
+      // Device info
+      const userAgent = navigator.userAgent;
+      const platform = navigator.platform;
+      const cores = navigator.hardwareConcurrency || 'Unknown';
+      document.getElementById('deviceInfo').textContent = `${platform} / ${cores} コア / ${userAgent.includes('Mobile') ? 'Mobile' : 'Desktop'}`;
       
       setTimeout(() => {
-        document.getElementById('cpuScore').textContent = results.cpu.toLocaleString();
-        document.getElementById('cpuDetail').textContent = results.cpuDetail;
-        document.getElementById('cpuBar').style.width = `${Math.min((results.cpu / 50000) * 100, 100)}%`;
+        document.getElementById('cpuScore').textContent = benchmarkResults.cpu.score.toLocaleString();
+        document.getElementById('cpuDetail').textContent = benchmarkResults.cpu.detail;
+        document.getElementById('cpuBar').style.width = `${Math.min((benchmarkResults.cpu.score / 500000) * 100, 100)}%`;
       }, 100);
       
       setTimeout(() => {
-        document.getElementById('gpuScore').textContent = results.gpu.toLocaleString();
-        document.getElementById('gpuDetail').textContent = results.gpuDetail;
-        document.getElementById('gpuBar').style.width = `${Math.min((results.gpu / 300000) * 100, 100)}%`;
-      }, 200);
-      
-      setTimeout(() => {
-        document.getElementById('fpsScore').textContent = results.fps.toFixed(3);
-        document.getElementById('fpsDetail').textContent = results.fpsDetail;
-        document.getElementById('fpsBar').style.width = `${Math.min((results.fps / 60) * 100, 100)}%`;
+        document.getElementById('gpuScore').textContent = benchmarkResults.gpu.score.toLocaleString();
+        document.getElementById('gpuDetail').textContent = benchmarkResults.gpu.detail;
+        document.getElementById('gpuBar').style.width = `${Math.min((benchmarkResults.gpu.score / 500000) * 100, 100)}%`;
       }, 300);
       
       setTimeout(() => {
-        document.getElementById('memoryScore').textContent = results.memory.toLocaleString();
-        document.getElementById('memoryDetail').textContent = results.memoryDetail;
-        document.getElementById('memoryBar').style.width = `${Math.min((results.memory / 500) * 100, 100)}%`;
-      }, 400);
-      
-      setTimeout(() => {
-        document.getElementById('networkScore').textContent = results.network.toFixed(3);
-        document.getElementById('networkDetail').textContent = results.networkDetail;
-        document.getElementById('networkBar').style.width = `${Math.min((1000 / results.network) * 10, 100)}%`;
+        document.getElementById('memScore').textContent = benchmarkResults.memory.score.toLocaleString();
+        document.getElementById('memDetail').textContent = benchmarkResults.memory.detail;
+        document.getElementById('memBar').style.width = `${Math.min((benchmarkResults.memory.score / 500000) * 100, 100)}%`;
       }, 500);
       
       setTimeout(() => {
-        document.getElementById('audioScore').textContent = results.audio.toLocaleString();
-        document.getElementById('audioDetail').textContent = results.audioDetail;
-        document.getElementById('audioBar').style.width = `${Math.min((results.audio / 30000) * 100, 100)}%`;
-      }, 600);
-      
-      setTimeout(() => {
-        document.getElementById('webglScore').textContent = results.webgl.toLocaleString();
-        document.getElementById('webglDetail').textContent = results.webglDetail;
-        document.getElementById('webglBar').style.width = `${Math.min((results.webgl / 100000) * 100, 100)}%`;
+        document.getElementById('uxScore').textContent = benchmarkResults.ux.score.toLocaleString();
+        document.getElementById('uxDetail').textContent = benchmarkResults.ux.detail;
+        document.getElementById('uxBar').style.width = `${Math.min((benchmarkResults.ux.score / 500000) * 100, 100)}%`;
       }, 700);
       
       setTimeout(() => {
-        document.getElementById('domScore').textContent = results.dom.toLocaleString();
-        document.getElementById('domDetail').textContent = results.domDetail;
-        document.getElementById('domBar').style.width = `${Math.min((results.dom / 30000) * 100, 100)}%`;
-      }, 800);
-      
-      setTimeout(() => {
-        document.getElementById('totalScore').textContent = Math.round(results.total).toLocaleString();
+        document.getElementById('totalScore').textContent = benchmarkResults.total.toLocaleString();
         
         let rating = '';
-        if (results.total >= 800) rating = '🚀 EXCELLENT';
-        else if (results.total >= 600) rating = '⭐ GREAT';
-        else if (results.total >= 400) rating = '✓ GOOD';
-        else if (results.total >= 200) rating = '○ FAIR';
-        else rating = '△ NEEDS IMPROVEMENT';
+        if (benchmarkResults.total >= 400000) rating = 'フラッグシップ級';
+        else if (benchmarkResults.total >= 300000) rating = 'ハイエンド';
+        else if (benchmarkResults.total >= 200000) rating = 'ミッドレンジ+';
+        else if (benchmarkResults.total >= 100000) rating = 'ミッドレンジ';
+        else if (benchmarkResults.total >= 50000) rating = 'エントリー';
+        else rating = 'ベーシック';
         
-        document.getElementById('totalRating').textContent = rating;
+        document.getElementById('scoreRating').textContent = `評価: ${rating}`;
       }, 1000);
     }
 
     function resetBenchmark() {
       document.getElementById('resultsScreen').classList.add('hidden');
       document.getElementById('startScreen').classList.remove('hidden');
-      document.getElementById('progressBar').style.width = '0%';
       
-      Object.keys(results).forEach(key => {
-        results[key] = 0;
-      });
+      benchmarkResults.cpu.score = 0;
+      benchmarkResults.gpu.score = 0;
+      benchmarkResults.memory.score = 0;
+      benchmarkResults.ux.score = 0;
+      benchmarkResults.total = 0;
       
-      document.getElementById('liveMetric1').textContent = '-';
-      document.getElementById('liveMetric2').textContent = '-';
-      document.getElementById('liveMetric3').textContent = '-';
-      document.getElementById('liveMetric4').textContent = '-';
+      document.getElementById('liveScore').textContent = '0';
     }
 
     document.getElementById('startButton').addEventListener('click', runFullBenchmark);
@@ -937,11 +923,13 @@
         }),
         mapToEditPanelValues: (config) => new Map([
           ['main_title', config.main_title || defaultConfig.main_title],
-          ['subtitle', config.subtitle || defaultConfig.subtitle],
-          ['button_text', config.button_text || defaultConfig.button_text]
+          ['version_text', config.version_text || defaultConfig.version_text],
+          ['start_button', config.start_button || defaultConfig.start_button],
+          ['result_title', config.result_title || defaultConfig.result_title],
+          ['retest_button', config.retest_button || defaultConfig.retest_button]
         ])
       });
     }
   </script>
- <script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'9c891d44721700b8',t:'MTc3MDE5NzA1OS4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+ <script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'9c89289071d396a9',t:'MTc3MDE5NzUyMi4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
 </html>
